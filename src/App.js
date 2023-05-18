@@ -52,12 +52,12 @@ const handSubmit = (e) => {
 
   return (
     <div className="App">
-      <div className="mb-3 mt-96" >
+      <div className="mb-3 mt-60" >
         <div className="relative mb-4 flex w-1/3 flex-wrap items-stretch justify-center mx-auto my-auto">
           <input
             type="search"
             className="relative m-0 block w-[1px] min-w-0 flex-auto rounded border border-solid border-neutral-300 bg-transparent bg-clip-padding px-3 py-[0.25rem] text-base font-normal leading-[1.6] text-neutral-700 outline-none transition duration-200 ease-in-out focus:z-[3] focus:border-primary focus:text-neutral-700 focus:shadow-[inset_0_0_0_1px_rgb(59,113,202)] focus:outline-none dark:border-neutral-600 dark:text-neutral-200 dark:placeholder:text-neutral-200 dark:focus:border-primary"
-            placeholder="Search"
+            placeholder="What are you searching for?"
             aria-label="Search"
             aria-describedby="button-addon2"
             value={searchItem}
@@ -84,15 +84,15 @@ const handSubmit = (e) => {
           </span>
         </div>
       </div>
-      <div className="data-results">
+      <div className="max-w-[680px] mx-auto mt-0">
         {data &&
           data.map((d, i) => {
             const url = `https://en.wikipedia.org/?curid=${d.pageid}`;
             return (
               <div className="data-result" key={i}>
-                <h2>{d.title}</h2>
+                <h2 className="font-black">{d.title}</h2>
                 <p dangerouslySetInnerHTML={{ __html: d.snippet }}></p>
-                <a href={url}>Read More</a>
+                <a href={url} className="text-xs italic">..Read More</a>
               </div>
             );
           })}
