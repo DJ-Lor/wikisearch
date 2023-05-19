@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+
 export default function App() {
 
   const [ searchItem, setSearchItem ] = useState('');
@@ -52,7 +53,7 @@ const handSubmit = (e) => {
 
   return (
     <div className="App">
-      <div className="mb-3 mt-60" >
+      <div className="mb-40 mt-60" >
         <div className="relative mb-4 flex w-1/3 flex-wrap items-stretch justify-center mx-auto my-auto">
           <input
             type="search"
@@ -84,24 +85,24 @@ const handSubmit = (e) => {
           </span>
         </div>
       </div>
-      <div className="max-w-[680px] mx-auto mt-0">
+      <div className="max-w-[1024px] mx-auto mt-0">
+        <div className="grid grid-cols-3 gap-20">
         {data &&
           data.map((d, i) => {
             const url = `https://en.wikipedia.org/?curid=${d.pageid}`;
             return (
-              <div className="data-result" key={i}>
+              <div className="data-result hover:bg-button-hover hover:relative hover:top-[-2px] hover:left-[-2px] p-4 bg-button-beige border-2 border-solid border-button-brown rounded-lg shadow-button-brown text-button-brown" key={i}>
                 <h2 className="font-black">{d.title}</h2>
                 <p dangerouslySetInnerHTML={{ __html: d.snippet }}></p>
                 <a href={url} className="text-xs italic">..Read More</a>
               </div>
             );
           })}
+          </div>
       </div>
     </div>
   );   
 }
-
-
 
 
 

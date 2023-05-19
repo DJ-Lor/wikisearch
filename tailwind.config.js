@@ -4,9 +4,19 @@ module.exports = {
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
-    extend: {},
-  },
-  plugins: [],
-}
+    
+    
+    extend: {
+      colors: {
+        'button-beige': '#fbeee0',
+        'button-brown': '#422800',
+        'button-hover': '#E59500',
+      }
 
+      
+    },
+  },
+  plugins: [
+  ],
+}
 
