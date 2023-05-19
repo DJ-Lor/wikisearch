@@ -58,7 +58,7 @@ export default function App() {
     <div className="App">
       <div className="mb-40 mt-60" >
         <img src={logo} alt="wikiLogo" className="max-w-xs justify-center mx-auto my-auto mb-10 flex-wrap relative w-1/3" />
-        <div className="relative mb-4 flex w-1/3 flex-wrap items-stretch justify-center mx-auto my-auto">
+        <div className="relative mb-4 flex w-1/4 flex-wrap items-stretch justify-center mx-auto my-auto">
           <input
             type="search"
             className="relative m-0 block w-[1px] min-w-0 flex-auto rounded border border-solid border-button-hover bg-transparent 
