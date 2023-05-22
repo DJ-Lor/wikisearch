@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useFavicon } from 'react-use';
 import logo from "./wiki-logo.png";
+import ReactPaginate from 'react-paginate';
 
 
 export default function App() {
@@ -9,12 +10,47 @@ export default function App() {
   const [ isSearching, setIsSearching] = useState(false);
   const [ data, setData] = useState([]);
   const [ error, setError] = useState('');
+  const [ currentPage, setCurrentPage ] = useState(0);
 
   const endpoint = `https://en.wikipedia.org/w/api.php?action=query&list=search&prop=extracts&exchars=250&exintro=true&explaintext=true&inprop=url&utf8=&format=json&origin=*&srlimit=20&srsearch=${searchItem}`;
 
+  const PER_PAGE = 10;
+  const offset = currentPage * PER_PAGE;
+  // const currentPageData = data
+  //     .slice(offset, offset + PER_PAGE)
+  //     .map( data => (data.title || []));
+  const pageCount = Math.ceil(data.length / PER_PAGE);
+
   useFavicon(logo);
 
-  const handSubmit = (e) => {
+  useEffect(() => {
+    wikiApiFetch();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const wikiApiFetch = () => { 
+    fetch(endpoint)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error ('Request Failed');
+      }
+      return response.json();
+    })
+    .then(json => {
+      setData(json?.query?.search || []);
+    })
+    .catch(error => {
+      setError('An error occured');
+    })
+    .finally(() => {
+      // Allow input box to be editable again and delete previous text 
+      setIsSearching(false);
+      setSearchItem('');
+    });
+
+  };
+
+  const handleSubmit = (e) => { 
   console.log('submit called');
     
     e.preventDefault();
@@ -27,31 +63,14 @@ export default function App() {
     setIsSearching(true);
 
     // Fetch api data 
-    const wikiApiFetch = () => { 
-      fetch(endpoint)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error ('Request Failed');
-        }
-        return response.json();
-      })
-      .then(json => {
-        setData(json?.query?.search || []);
-      })
-      .catch(error => {
-        setError('An error occured');
-      })
-      .finally(() => {
-        // Allow input box to be editable again and delete previous text 
-        setIsSearching(false);
-        setSearchItem('');
-      });
-     
-    };
       wikiApiFetch();
   };
 
   console.log(data)
+
+  function handlePageClick({ selected: selectedPage }) {
+    setCurrentPage(selectedPage);
+  }
 
 
   return (
@@ -75,7 +94,7 @@ export default function App() {
           />
           <span
             className="input-group-text flex items-center whitespace-nowrap rounded px-3 py-1.5 text-center text-base font-normal text-button-hover dark:text-button-hover"
-            onClick={handSubmit}
+            onClick={handleSubmit}
             id="basic-addon2"
           >
             <svg
@@ -95,8 +114,12 @@ export default function App() {
       </div>
       <div className="max-w-[1024px] mx-auto mt-0">
         <div className="grid grid-cols-3 gap-20">
+
+
+
         {data &&
-          data.map((d, i) => {
+          data
+          .slice(offset, offset + PER_PAGE).map((d, i) => {
             const url = `https://en.wikipedia.org/?curid=${d.pageid}`;
             return (
               <div className="data-result shadow-md hover:bg-button-hover hover:relative hover:top-[-2px] hover:left-[-2px] p-4 bg-button-beige border-2 border-solid border-button-brown rounded-lg shadow-button-brown text-button-brown" key={i}>
@@ -108,10 +131,23 @@ export default function App() {
           })}
           </div>
       </div>
+      <div>
+      <ReactPaginate
+        previousLabel={"← Previous"}
+        nextLabel={"Next →"}
+        pageCount={pageCount}
+        onPageChange={handlePageClick}
+        containerClassName={"pagination"}
+        previousLinkClassName={"pagination__link"}
+        nextLinkClassName={"pagination__link"}
+        disabledClassName={"pagination__link--disabled"}
+        activeClassName={"pagination__link--active"}
+      />
+       
+      </div>
     </div>
   );   
 }
-
 
 
 
