@@ -5,7 +5,7 @@
 body {
     background: linear-gradient(-30deg, #E5DADA, #002642);
     background-size: 400% 400%;
-
+    overscroll-behavior-y: none;
 }
     
 @keyframes gradient {

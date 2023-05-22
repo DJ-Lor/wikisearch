@@ -12,7 +12,7 @@ export default function App() {
   const [ error, setError] = useState('');
   const [ currentPage, setCurrentPage ] = useState(0);
 
-  const endpoint = `https://en.wikipedia.org/w/api.php?action=query&list=search&prop=extracts&exchars=250&exintro=true&explaintext=true&inprop=url&utf8=&format=json&origin=*&srlimit=20&srsearch=${searchItem}`;
+  const endpoint = `https://en.wikipedia.org/w/api.php?action=query&list=search&prop=extracts&exchars=250&exintro=true&explaintext=true&inprop=url&utf8=&format=json&origin=*&srlimit=100&srsearch=${searchItem}`;
 
   const PER_PAGE = 10;
   const offset = currentPage * PER_PAGE;
@@ -29,6 +29,7 @@ export default function App() {
   }, []);
 
   const wikiApiFetch = () => { 
+
     fetch(endpoint)
     .then(response => {
       if (!response.ok) {
@@ -37,6 +38,12 @@ export default function App() {
       return response.json();
     })
     .then(json => {
+      // If the continue object is there --> there is more data
+      // if (continue?) {
+      //   setContinue(aiosdjfia)
+      // } else {
+      //   // set continue to emtpy
+      // }
       setData(json?.query?.search || []);
     })
     .catch(error => {
@@ -75,7 +82,7 @@ export default function App() {
 
   return (
     <div className="App">
-      <div className="mb-40 mt-60" >
+      <div className="mb-40 mt-40" >
         <img src={logo} alt="wikiLogo" className="max-w-xs justify-center mx-auto my-auto mb-10 flex-wrap relative w-1/3" />
         <div className="relative mb-4 flex w-1/4 flex-wrap items-stretch justify-center mx-auto my-auto">
           <input
@@ -112,38 +119,37 @@ export default function App() {
           </span>
         </div>
       </div>
-      <div className="max-w-[1024px] mx-auto mt-0">
-        <div className="grid grid-cols-1 gap-10">
-
-
-
-        {data &&
-          data
-          .slice(offset, offset + PER_PAGE).map((d, i) => {
-            const url = `https://en.wikipedia.org/?curid=${d.pageid}`;
-            return (
-              <div className="data-result shadow-md hover:bg-button-hover hover:relative hover:top-[-2px] hover:left-[-2px] p-4 bg-button-beige border-2 border-solid border-button-brown rounded-lg shadow-button-brown text-button-brown" key={i}>
-                <h2 className="font-black">{d.title}</h2>
-                <p dangerouslySetInnerHTML={{ __html: d.snippet }}></p>
-                <a href={url} className="text-xs italic">..Read More</a>
+     
+          <div className="max-w-[1024px] mx-auto mt-0">
+            <div className="grid grid-cols-1 gap-10">
+              {data.length ?
+                data
+                .slice(offset, offset + PER_PAGE).map((d, i) => {
+                  const url = `https://en.wikipedia.org/?curid=${d.pageid}`;
+                  return (
+                    <div className="data-result shadow-md hover:bg-button-hover hover:relative hover:top-[-2px] hover:left-[-2px] p-4 bg-button-beige border-2 border-solid border-button-brown rounded-lg shadow-button-brown text-button-brown" key={i}>
+                      <h2 className="font-black">{d.title}</h2>
+                      <p dangerouslySetInnerHTML={{ __html: d.snippet }}></p>
+                      <a href={url} className="text-xs italic">..Read More</a>
+                    </div>
+                  );
+                }) : 
+                <p className='flex flex-row relative w-1/6 mx-auto italic text-button-beige'>Sorry, no results found!</p>}
               </div>
-            );
-          })}
+            </div>
+          <div>
+            <ReactPaginate className='flex flex-row justify-between relative w-1/3 mb-20 mt-20 mx-auto'
+              previousLabel={"← Prev"}
+              nextLabel={"Next →"}
+              pageCount={pageCount}
+              onPageChange={handlePageClick}
+              containerClassName={"pagination"}
+              previousLinkClassName={"pagination__link"}
+              nextLinkClassName={"pagination__link"}
+              disabledClassName={"pagination__link--disabled"}
+              activeClassName={"pagination__link--active"}
+            />
           </div>
-      </div>
-      <div>
-      <ReactPaginate
-        previousLabel={"← Previous"}
-        nextLabel={"Next →"}
-        pageCount={pageCount}
-        onPageChange={handlePageClick}
-        containerClassName={"pagination"}
-        previousLinkClassName={"pagination__link"}
-        nextLinkClassName={"pagination__link"}
-        disabledClassName={"pagination__link--disabled"}
-        activeClassName={"pagination__link--active"}
-      />
-      </div>
     </div>
   );   
 }
