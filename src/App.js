@@ -113,7 +113,7 @@ export default function App() {
         </div>
       </div>
       <div className="max-w-[1024px] mx-auto mt-0">
-        <div className="grid grid-cols-3 gap-20">
+        <div className="grid grid-cols-1 gap-10">
 
 
 
@@ -143,7 +143,6 @@ export default function App() {
         disabledClassName={"pagination__link--disabled"}
         activeClassName={"pagination__link--active"}
       />
-       
       </div>
     </div>
   );   
