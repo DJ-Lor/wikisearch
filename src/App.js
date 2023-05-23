@@ -8,7 +8,7 @@ export default function App() {
 
   const [ searchItem, setSearchItem ] = useState('');
   const [ isSearching, setIsSearching] = useState(false);
-  const [ data, setData] = useState([]);
+  const [ data, setData] = useState(null);
   const [ error, setError] = useState('');
   const [ currentPage, setCurrentPage ] = useState(0);
 
@@ -19,14 +19,16 @@ export default function App() {
   // const currentPageData = data
   //     .slice(offset, offset + PER_PAGE)
   //     .map( data => (data.title || []));
-  const pageCount = Math.ceil(data.length / PER_PAGE);
+  let pageCount = 0;
+  if (data?.length) pageCount = Math.ceil(data.length / PER_PAGE);
 
   useFavicon(logo);
 
-  useEffect(() => {
-    wikiApiFetch();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // useEffect(() => {
+  //   wikiApiFetch();
+  // // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
+
 
   const wikiApiFetch = () => { 
 
@@ -80,24 +82,25 @@ export default function App() {
   }
 
 
+  
+
   return (
     <div className="App">
-      <div className="mb-40 mt-40" >
+      <div className="mb-40 mt-40">
         <img src={logo} alt="wikiLogo" className="max-w-xs justify-center mx-auto my-auto mb-10 flex-wrap relative w-1/3" />
         <div className="relative mb-4 flex w-1/4 flex-wrap items-stretch justify-center mx-auto my-auto">
           <input
             type="search"
             className="relative m-0 block w-[1px] min-w-0 flex-auto rounded border border-solid border-button-hover bg-transparent 
-            bg-clip-padding px-3 py-[0.5rem] text-base font-normal leading-[1.8] text-button-hover 
-            outline-none transition duration-200 ease-in-out focus:z-[3]
-             focus:border-button-beige focus:text-button-hover focus:shadow-[inset_0_0_0_2px_rgb(59,113,202)] 
-             focus:outline-none dark:border-button-hover dark:text-button-hover placeholder:text-button-beige dark:focus:border-button-hover"
+              bg-clip-padding px-3 py-[0.5rem] text-base font-normal leading-[1.8] text-button-hover 
+              outline-none transition duration-200 ease-in-out focus:z-[3]
+               focus:border-button-beige focus:text-button-hover focus:shadow-[inset_0_0_0_2px_rgb(59,113,202)] 
+               focus:outline-none dark:border-button-hover dark:text-button-hover placeholder:text-button-beige dark:focus:border-button-hover"
             placeholder="What are you searching for?"
             aria-label="Search"
             aria-describedby="button-addon2"
             value={searchItem}
             onChange={(e) => setSearchItem(e.target.value)}
-            
           />
           <span
             className="input-group-text flex items-center whitespace-nowrap rounded px-3 py-1.5 text-center text-base font-normal text-button-hover dark:text-button-hover"
@@ -119,40 +122,45 @@ export default function App() {
           </span>
         </div>
       </div>
-     
-          <div className="max-w-[1024px] mx-auto mt-0">
-            <div className="grid grid-cols-1 gap-10">
-              {data.length ?
-                data
-                .slice(offset, offset + PER_PAGE).map((d, i) => {
-                  const url = `https://en.wikipedia.org/?curid=${d.pageid}`;
-                  return (
-                    <div className="data-result shadow-md hover:bg-button-hover hover:relative hover:top-[-2px] hover:left-[-2px] p-4 bg-button-beige border-2 border-solid border-button-brown rounded-lg shadow-button-brown text-button-brown" key={i}>
-                      <h2 className="font-black">{d.title}</h2>
-                      <p dangerouslySetInnerHTML={{ __html: d.snippet }}></p>
-                      <a href={url} className="text-xs italic">..Read More</a>
-                    </div>
-                  );
-                }) : 
-                <p className='flex flex-row relative w-1/6 mx-auto italic text-button-beige'>Sorry, no results found!</p>}
-              </div>
-            </div>
-          <div>
-            <ReactPaginate className='flex flex-row justify-between relative w-1/3 mb-20 mt-20 mx-auto'
-              previousLabel={"← Prev"}
-              nextLabel={"Next →"}
-              pageCount={pageCount}
-              onPageChange={handlePageClick}
-              containerClassName={"pagination"}
-              previousLinkClassName={"pagination__link"}
-              nextLinkClassName={"pagination__link"}
-              disabledClassName={"pagination__link--disabled"}
-              activeClassName={"pagination__link--active"}
-            />
+  
+      <div className="max-w-[1024px] mx-auto mt-0">
+        { data &&
+          <div className="grid grid-cols-1 gap-10">
+            {data.length ? (
+              data.slice(offset, offset + PER_PAGE).map((d, i) => {
+                const url = `https://en.wikipedia.org/?curid=${d.pageid}`;
+                return (
+                  <div
+                    className="data-result shadow-md hover:bg-button-hover hover:relative hover:top-[-2px] hover:left-[-2px] p-4 bg-button-beige border-2 border-solid border-button-brown rounded-lg shadow-button-brown text-button-brown"
+                    key={i}
+                  >
+                    <h2 className="font-black">{d.title}</h2>
+                    <p dangerouslySetInnerHTML={{ __html: d.snippet }}></p>
+                    <a href={url} className="text-xs italic">..Read More</a>
+                  </div>
+                );
+              })
+            ) : (
+              <p className='flex flex-row relative w-1/6 mx-auto italic text-button-beige'>Sorry, no results found!</p>
+            )}
           </div>
+        }
+  
+        {data?.length &&
+          <ReactPaginate
+            className='flex flex-row justify-between relative w-1/3 mb-20 mt-20 mx-auto text-button-beige'
+            previousLabel={"← Prev"}
+            nextLabel={"Next →"}
+            pageCount={pageCount}
+            onPageChange={handlePageClick}
+            containerClassName={"pagination"}
+            previousLinkClassName={"pagination__link"}
+            nextLinkClassName={"pagination__link"}
+            disabledClassName={"pagination__link--disabled"}
+            activeClassName={"pagination__link--active"}
+          />
+        }
+      </div>
     </div>
-  );   
-}
-
-
-
+  );
+ } 
